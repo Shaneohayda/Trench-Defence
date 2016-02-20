@@ -1,13 +1,10 @@
-#include "ui/CocosGUI.h"
-#include <iostream>
 // #include "base/CCValue.h"
 #include "Level1Scene.h"
 #include "Tower.h" // We will deal with it later.
 #include "DataModel.h"
 #include <Vector>
 #include <string>
-
-
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
 
@@ -16,6 +13,9 @@ Scene* Level1::createScene()
 	// 'Level1Scene' is an autorelease object
 	auto Level1Scene = Scene::create();
 
+	CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic("War.wav", true);
+
 	// 'layer' is an autorelease object
 	auto layer = Level1::create();
 
@@ -23,8 +23,9 @@ Scene* Level1::createScene()
 	// Level1Scene->addChild(layer);
 
 	// Add the HUD to the main game
-	auto myGameHUD = GameHUD::shareHUD();
-
+	//auto myGameHUD = GameHUD::shareHUD();
+	GameHUD *hud = new GameHUD;
+	hud->init();
 	// add gameHUD
 	// Level1Scene->addChild(myGameHUD, 3);
 
@@ -32,12 +33,13 @@ Scene* Level1::createScene()
 	// auto myGameHUD = GameHUD::shareHUD();
 
 	Level1Scene->addChild(layer);
-	Level1Scene->addChild(myGameHUD, 1);
+	Level1Scene->addChild(hud);
 
 	DataModel *m = DataModel::getModel();
 	m->_gameLayer = layer; // add this
-	m->_gameHUDLayer = myGameHUD;
-	
+	layer->_hud = hud;
+
+
 
 	// return the scene
 	return Level1Scene;
@@ -76,6 +78,9 @@ bool Level1::init()
 	// _tileMap->setScale(visibleSize.width / 220 , visibleSize.height / 220);
 	// Add the background
 	_background = _tileMap->layerNamed("Background");
+	_Sources = _tileMap->layerNamed("Sources");
+	_Quicksand = _tileMap->layerNamed("Quicksand");
+	_Misc = _tileMap->layerNamed("Misc");
 	// _buildable = _tileMap->layerNamed("buildable");
 
 	// this->addChild(_tileMap, -1);
@@ -100,46 +105,25 @@ bool Level1::init()
 	int x = enemySpawnPoint["x"].asInt();
 	int y = enemySpawnPoint["y"].asInt();
 
-	_enemyUnit1 = Sprite::create("Enemy1.png");
-	_enemyUnit1->setPosition(x + _tileMap->getTileSize().width /2, y + _tileMap->getTileSize().height / 2);
+	// _enemyUnit1 = Sprite::create("Enemy1.png");
+	// _enemyUnit1->setPosition(x + _tileMap->getTileSize().width /2, y + _tileMap->getTileSize().height / 2);
 	// _enemyUnit1->setPosition(x,y);
-	_enemyUnit1->setScale(0.2);
-
-	addChild(_enemyUnit1);
-	setViewPointCenter(_enemyUnit1->getPosition());
+	// _enemyUnit1->setScale(0.2);
+	// addChild(_enemyUnit1);
+	// setViewPointCenter(_enemyUnit1->getPosition());
 
 
 	/////////////////////////////
 	// 3. add turrets positions to the map so they can
 	//    be added by the player later
 
-
-
-	/////////////////////////////
-	// 4. add a menu item with "X" image, which is clicked to quit the program
-	//    you may modify it.
-
-	// add a "close" icon to exit the progress. it's an autorelease object
-	auto closeItem = MenuItemImage::create(
-		"CloseNormal.png",
-		"CloseSelected.png",
-		CC_CALLBACK_1(Level1::menuCloseCallback, this));
-
-	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width / 2,
-		origin.y + closeItem->getContentSize().height / 2));
-
-	// create menu, it's an autorelease object
-	auto menu = Menu::create(closeItem, NULL);
-	menu->setPosition(Vec2::ZERO);
-	this->addChild(menu, 1);
-
-	
 	this->addWayPoint();
 	this->addWaves();
 	this->scheduleUpdate();
 	this->schedule(schedule_selector(Level1::gameLogic), 1.0f);
 	this->currentLevel = 0;
-	
+
+	// setViewPointCenter(_tileMap->getPositionX);
 
 	return true;
 }
@@ -316,35 +300,111 @@ bool Level1::canBuildOnTilePosition(Point pos)
 	Value props = this->_tileMap->getPropertiesForGID(tileGid);
 
 	// MD
-	// if (!props.isNull){ // NULL check
-	ValueMap map = props.asValueMap();
-	int type_int;
-	if (map.size() == 0)
-	{
-		type_int = 0;
-	}
-	else
-	{
-		type_int = map.at("buildable").asInt();
-		// type_int = map.at("Turrets").asInt();
-	}
-
-	if (1 == type_int)
+	if (props.isNull())   // NULL check
 	{
 		return true;
 	}
-// }
-	return false;
+	ValueMap map = props.asValueMap();
+	bool buildable = true;
+	if (map.size() != 0)
+	{
+
+		buildable = map.at("buildable").asBool();
+	}
+
+
+	return buildable;
 }
 
+/*
+bool Level1::canBuildOnTilePosition(Point pos)
+{
+Point towerLoc = this->tileCoordForPosition(pos);
+int tileGid = _background->getTileGIDAt(towerLoc);
+Value props = this->_tileMap->getPropertiesForGID(tileGid);
+if (props.isNull()) {
+return false;
+}
+ValueMap map = props.asValueMap();
+int type_int;
+if (map.size() == 0)
+{
+type_int = 0;
+}
+else
+{
+type_int = map.at("buildable").asInt();
+}
+
+if (type_int == 1)
+{
+return true;
+}
+return false;
+}
+*/
+
+/*
+void Level1::addTower(Point pos)
+{
+DataModel *m = DataModel::getModel();
+
+Tower *target = NULL;
+// WORKING
+Point towerLoc = this->tileCoordForPosition(pos);
+int tileGid = this->_background->tileGIDAt(towerLoc);
+Value props = this->_tileMap->propertiesForGID(tileGid);
+ValueMap map = props.asValueMap();
+// bool buildable = canBuildOnTilePosition(pos);
+
+CCLOG("Preparing to add tower to tile", "%s");
+
+
+
+int type_int = map.at("buildable").asInt();
+// int type_int = map.at("Turrets").asInt();
+if (type_int == 1)
+{
+// Problem here....
+target = MachineGunTower::tower();
+// target->setPosition(Vec2((towerLoc.x * 32) + 16, this->_tileMap->getContentSize().height - (towerLoc.y * 32) - 16));
+target->setPosition(Vec2((towerLoc.x * 20) + 10, this->_tileMap->getContentSize().height - (towerLoc.y * 20) - 10));
+this->addChild(target, 1);
+target->setTag(1);
+m->towers.pushBack(target);
+}
+else
+{
+log("Tile Not Buildable");
+}
+}
+*/
 
 void Level1::addTower(Point pos)
 {
 	DataModel *m = DataModel::getModel();
 
+	//_numCollected = 5;
 	Tower *target = NULL;
 	Point towerLoc = this->tileCoordForPosition(pos);
-	int tileGid = this->_background->tileGIDAt(towerLoc);
+	bool buildable = canBuildOnTilePosition(pos);
+	if ((buildable && _numCollected >= 5))  {
+		_numCollected = _numCollected - 5;
+		_hud->numCollectedChanged(_numCollected);
+		Point towerLoc = this->tileCoordForPosition(pos);
+
+		target = MachineGunTower::tower();
+		target->setPosition(Vec2((towerLoc.x * 20) + 10, this->_tileMap->getContentSize().height - (towerLoc.y * 20) + 150));
+		this->addChild(target, 1);
+		target->setTag(1);
+		m->towers.pushBack(target);
+
+	}
+	else
+	{
+		log("Tile Not Buildable");
+	}
+	/*int tileGid = this->_background->tileGIDAt(towerLoc);
 	Value props = this->_tileMap->propertiesForGID(tileGid);
 	ValueMap map = props.asValueMap();
 
@@ -352,18 +412,18 @@ void Level1::addTower(Point pos)
 	// int type_int = map.at("Turrets").asInt();
 	if (1 == type_int)
 	{
-		// Problem here....
-		target = MachineGunTower::tower();
-		// target->setPosition(Vec2((towerLoc.x * 32) + 16, this->_tileMap->getContentSize().height - (towerLoc.y * 32) - 16));
-		target->setPosition(Vec2((towerLoc.x * 20) + 10, this->_tileMap->getContentSize().height - (towerLoc.y * 20) - 10));
-		this->addChild(target, 1);
-		target->setTag(1);
-		m->towers.pushBack(target);
+	// Problem here....
+	target = MachineGunTower::tower();
+	// target->setPosition(Vec2((towerLoc.x * 32) + 16, this->_tileMap->getContentSize().height - (towerLoc.y * 32) - 16));
+	target->setPosition(Vec2((towerLoc.x * 20) + 10, this->_tileMap->getContentSize().height - (towerLoc.y * 20) - 10));
+	this->addChild(target, 1);
+	target->setTag(1);
+	m->towers.pushBack(target);
 	}
 	else
 	{
-		log("Tile Not Buildable");
-	}
+	log("Tile Not Buildable");
+	}*/
 }
 
 Point Level1::boundLayerPos(Point newPos)
@@ -380,6 +440,9 @@ Point Level1::boundLayerPos(Point newPos)
 void Level1::update(float dt) {
 	DataModel *m = DataModel::getModel();
 	Vector<Projectile*> projectilesToDelete;
+	//Level1 *l = ;
+
+	int c = 0;
 
 	for each(Projectile *projectile in m->projectiles)
 		// for (int i = 0; i < m->projectiles.size(); i++) // Use these code if your VC doesn’t support C++11.
@@ -412,18 +475,28 @@ void Level1::update(float dt) {
 				if (creep->curHp <= 0)
 				{
 					targetsToDelete.pushBack(creep);
+					//GameHUD* score = (GameHUD*)(c);
+
+					//m->_score=score;
 				}
 				break;
 			}
 		}
 
 		//for each(Creep *target in targetsToDelete)
+
 		for (int i = 0; i < targetsToDelete.size(); i++)
 		{
 			Creep* target = (Creep*)(targetsToDelete.at(i));
 
+
 			m->targets.eraseObject(target);
 			this->removeChild(target, true);
+			//count++;
+			_numCollected++;
+			_hud->numCollectedChanged(_numCollected);
+
+			//CCLOG("COIN = %i", count);
 		}
 	}
 
@@ -438,4 +511,3 @@ void Level1::update(float dt) {
 }
 
 //  #endif
-

@@ -14,6 +14,8 @@ public:
 	CREATE_FUNC(StartMenu);
 
 	void startButtonPressed();
+	void rankButtonPressed();
+	void settingsButtonPressed();
 	void menuCloseCallback(cocos2d::Ref* pSender);
 };
 

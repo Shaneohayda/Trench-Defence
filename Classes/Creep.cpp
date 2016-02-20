@@ -21,11 +21,37 @@ Creep* Creep::initWithCreep(Creep* copyFrom)
 Creep* FastRedCreep::creep()
 {
 	auto creep = Creep::create();
-	creep->sprite = Sprite::create("Enemy1.png");
+	creep->sprite = Sprite::create("invisible.png");
+
+	Vector<SpriteFrame*> animFrames;
+	animFrames.reserve(8);
+	animFrames.pushBack(SpriteFrame::create("EnSoldier03.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("EnSoldier02.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("EnSoldier01.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("EnSoldier02.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("EnSoldier03.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("EnSoldier04.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("EnSoldier03.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("EnSoldier02.png", Rect(0, 0, 65, 81)));
+
+	// create the animation out of the frames
+	Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.1f);
+	Animate* animate = Animate::create(animation);
+
+	// run it and repeat it forever
+	creep->runAction(RepeatForever::create(animate));
+	//rotate
+	auto rotateTo = RotateTo::create(2.0f, 40.0f);
+
+	creep->runAction(rotateTo);
+
+	// Rotates a Node clockwise by 40 degree over 2 seconds
+	auto rotateBy = RotateBy::create(2.0f, 40.0f);
+	creep->runAction(rotateBy);
 	creep->setScale(0.3);
 	creep->addChild(creep->sprite, 0);
 	creep->curHp = 10;
-	creep->moveDuration = 3;
+	creep->moveDuration = 5;
 	// The curWaypoint may need to be changed depending on the tmx points
 	creep->curWaypoint = 0;
 	return creep;
@@ -34,11 +60,32 @@ Creep* FastRedCreep::creep()
 Creep* StrongGreenCreep::creep()
 {
 	auto creep = Creep::create();
-	creep->sprite = Sprite::create("Enemy2.png");
+	creep->sprite = Sprite::create("invisible2.png");
+	Vector<SpriteFrame*> animFrames;
+	animFrames.reserve(8);
+	animFrames.pushBack(SpriteFrame::create("Dog1.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("Dog2.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("Dog3.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("Dog4.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("Dog5.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("Dog4.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("Dog3.png", Rect(0, 0, 65, 81)));
+	animFrames.pushBack(SpriteFrame::create("Dog2.png", Rect(0, 0, 65, 81)));
+	// create the animation out of the frames
+	Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.1f);
+	Animate* animate = Animate::create(animation);
+	auto rotateTo = RotateTo::create(2.0f, 0.0f);
+	creep->runAction(rotateTo);
+
+	// Rotates a Node clockwise by 40 degree over 2 seconds
+	auto rotateBy = RotateBy::create(15.0f, 140.0f);
+	creep->runAction(rotateBy);
+	// run it and repeat it forever
+	creep->runAction(RepeatForever::create(animate));
 	creep->setScale(0.3);
 	creep->addChild(creep->sprite, 0);
-	creep->curHp = 30;
-	creep->moveDuration = 8;
+	creep->curHp = 10;
+	creep->moveDuration = 6;
 	// The curWaypoint may need to be changed depending on the tmx points
 	creep->curWaypoint = 0;
 	return creep;
@@ -61,13 +108,13 @@ WayPoint* Creep::getNextWaypoint()
 	{
 		this->curWaypoint++;
 	}
-	
+
 	else
 	{
 		// If we wanted to loop the waypoint movement we would uncommment this
 		// this->curWaypoint = 0;
 	}
-	
+
 
 	CCLOG("%d", this->curWaypoint); // For testing.
 

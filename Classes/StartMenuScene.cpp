@@ -2,6 +2,7 @@
 #include <iostream>
 #include "StartMenuScene.h"
 #include "Level1Scene.h"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
 
@@ -70,7 +71,7 @@ bool StartMenu::init()
 	// this->addChild(label, 1);
 
 	// add "TeamNA" splash screen" with logo
-	auto sprite = Sprite::create("trenches_menu_logo.jpg");
+	auto sprite = Sprite::create("Main_Menu.png");
 	// set the anchor point to the middle
 	// Bottom Left (0,0), Top Right (1,1)
 	sprite->setAnchorPoint(Vec2(0.5, 0.5));
@@ -86,15 +87,39 @@ bool StartMenu::init()
 	this->addChild(sprite, 0);
 
 	// Add a button to start
-	ui::Button* startBtn = ui::Button::create("Normal_Button.png");
-	startBtn->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height*0.15 + origin.y));
-	startBtn->setScale(0.15f);
-	startBtn->setTitleText("START");
+	// Add a button to start
+	ui::Button* startBtn = ui::Button::create("Normal-Button.png");
+	startBtn->setPosition(Vec2(visibleSize.width / 1.80 + origin.x, visibleSize.height*0.57 + origin.y));
+	startBtn->setScale(0.6f);
+	startBtn->setTitleText(" ");
 	startBtn->setTitleFontSize(80);
 	startBtn->setColor(Color3B(159, 168, 176));
 	startBtn->addTouchEventListener(CC_CALLBACK_0(StartMenu::startButtonPressed, this));
 	this->addChild(startBtn);
 
+	//Add a Rankings Button
+	ui::Button* rankBtn = ui::Button::create("Ranking-Button.png");
+	rankBtn->setPosition(Vec2(visibleSize.width / 1.80 + origin.x, visibleSize.height*0.50 + origin.y));
+	rankBtn->setScale(0.6f);
+	rankBtn->setTitleText(" ");
+	rankBtn->setTitleFontSize(80);
+	rankBtn->setColor(Color3B(159, 168, 176));
+	rankBtn->addTouchEventListener(CC_CALLBACK_0(StartMenu::startButtonPressed, this));
+	this->addChild(rankBtn);
+
+	//Add a Settings Button
+	ui::Button* settingsBtn = ui::Button::create("Setting-Button.png");
+	settingsBtn->setPosition(Vec2(visibleSize.width / 1.80 + origin.x, visibleSize.height*0.435 + origin.y));
+	settingsBtn->setScale(0.6f);
+	settingsBtn->setTitleText(" ");
+	settingsBtn->setTitleFontSize(80);
+	settingsBtn->setColor(Color3B(159, 168, 176));
+	settingsBtn->addTouchEventListener(CC_CALLBACK_0(StartMenu::startButtonPressed, this));
+	this->addChild(settingsBtn);
+
+	//Add music
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic("march.wav", true);
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound1.wav");
 	return true;
 }
 
