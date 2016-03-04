@@ -11,7 +11,7 @@ public:
 	Sprite* selSprite;
 	Vector<Sprite*> movableSprites;
 	static GameHUD* _sharHUD;
-	static CCScene scene();
+	// static CCScene scene();
 	virtual bool init();
 	static GameHUD* shareHUD();
 	CREATE_FUNC(GameHUD);
@@ -22,8 +22,11 @@ public:
 	void onTouchEnded(Touch* touch, Event* event);
 
 	void numCollectedChanged(int numCollected);
+	void scCollectedChanged(int scCollected);
 
 private:
+	cocos2d::Label *coinLabel;
+	LabelTTF *_label;
 	cocos2d::Label *scoreLabel;
-	CCLabelTTF *_label;
+	LabelTTF *_label2;
 };

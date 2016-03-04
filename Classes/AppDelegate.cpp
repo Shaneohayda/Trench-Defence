@@ -10,13 +10,14 @@
 #include "Tower.h"
 #include "GameHUD.h"
 #include "Projectile.h"
+#include "HistoryScene.h"
 
 USING_NS_CC;
 
 static cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
 static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
 //static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
- static cocos2d::Size mediumResolutionSize = cocos2d::Size(720, 480);
+static cocos2d::Size mediumResolutionSize = cocos2d::Size(720, 480);
 // static cocos2d::Size largeResolutionSize = cocos2d::Size(720, 480);
 static cocos2d::Size largeResolutionSize = cocos2d::Size(720, 480);
 // static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
@@ -55,9 +56,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	int screenWidth = 1355;
 	int screenHeight = 740;
 
+	int screenWidthAndroid = 320;
+	int screenHeightAndroid = 480;
+
 	if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
 		glview = GLViewImpl::createWithRect("Trench-Defence", Rect(0, 0, screenWidth, screenHeight));
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+		glview = GLViewImpl::createWithRect("Trench-Defence", Rect(0, 0, screenWidthAndroid, screenHeightAndroid));
 #else
 		glview = GLViewImpl::create("Trench-Defence");
 #endif
@@ -116,4 +122,3 @@ void AppDelegate::applicationWillEnterForeground() {
 	// if you use SimpleAudioEngine, it must resume here
 	// SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
-

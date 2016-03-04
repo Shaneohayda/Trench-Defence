@@ -34,30 +34,35 @@ public:
 	void menuCloseCallback(cocos2d::Ref* pSender);
 	void setViewPointCenter(cocos2d::Point position);
 	// Tower
-	void addTower(Point pos);
+	void addTower(Point pos, std::string towerType);
 	Point tileCoordForPosition(Point position);
 	bool canBuildOnTilePosition(Point pos);
 	Point boundLayerPos(Point newPos);
 	int getCount() { return count; };
 	void setCount(int c) { count = c; };
+	int getSCount() { return count; };
+	void setSCount(int s) { count = s; };
 
 	Point position;
 	GameHUD *gameHUD;
 
+	// void onEnter();
+	// void onExit();
+
 private:
 
-	CCTMXTiledMap *_tileMap;
-	CCTMXLayer *_background;
-	CCTMXLayer *_Sources;
-	CCTMXLayer *_Quicksand;
-	CCTMXLayer *_Misc;
-	CCTMXLayer *_walls;
-	CCTMXLayer *_turrets;
-	CCTMXLayer *_buildable;
-	CCSprite *_enemyUnit1;
+	TMXTiledMap *_tileMap;
+	TMXLayer *_background;
+	TMXLayer *_Sources;
+	TMXLayer *_Quicksand;
+	TMXLayer *_walls;
+	TMXLayer *_turrets;
+	TMXLayer *_buildable;
+	Sprite *_enemyUnit1;
 	cocos2d::Label *scoreLabel;
 	GameHUD *_hud;
 	int _numCollected = 5;
+	int _scCollected = 0;
 };
 
 #endif
