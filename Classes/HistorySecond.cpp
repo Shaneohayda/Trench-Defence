@@ -1,22 +1,22 @@
 #include "ui/CocosGUI.h"
 #include <iostream>
-#include "StartMenuScene.h"
 #include "Level1Scene.h"
-#include "HistoryScene.h"
-#include "HistorySecond.h"
+#include "StartMenuScene.h"
 #include "HistoryThird.h"
+#include "HistorySecond.h"
+#include "HistoryScene.h"
 #include "SimpleAudioEngine.h"
 #include "DataModel.h"
 
 USING_NS_CC;
 
-Scene* HistoryScene::createScene()
+Scene* HistorySecond::createScene()
 {
 	// 'scene' is an autorelease object
 	auto scene = Scene::create();
 
 	// 'layer' is an autorelease object
-	auto layer = HistoryScene::create();
+	auto layer = HistorySecond::create();
 
 	// add layer as a child to scene
 	scene->addChild(layer);
@@ -26,7 +26,7 @@ Scene* HistoryScene::createScene()
 }
 
 // on "init" you need to initialize your instance
-bool HistoryScene::init()
+bool HistorySecond::init()
 {
 	//////////////////////////////
 	// 1. super init first
@@ -46,7 +46,7 @@ bool HistoryScene::init()
 	auto closeItem = MenuItemImage::create(
 		"CloseNormal.png",
 		"CloseSelected.png",
-		CC_CALLBACK_1(HistoryScene::menuCloseCallback, this));
+		CC_CALLBACK_1(HistorySecond::menuCloseCallback, this));
 
 	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width / 2,
 		origin.y + closeItem->getContentSize().height / 2));
@@ -61,7 +61,7 @@ bool HistoryScene::init()
 	// 3. add your codes below...
 
 	// add "TeamNA" splash screen" with logo
-	auto sprite = Sprite::create("History1.png");
+	auto sprite = Sprite::create("History2.png");
 	// set the anchor point to the middle
 	// Bottom Left (0,0), Top Right (1,1)
 	sprite->setAnchorPoint(Vec2(0.5, 0.5));
@@ -83,7 +83,7 @@ bool HistoryScene::init()
 	startBtn->setTitleText(" ");
 	startBtn->setTitleFontSize(80);
 	startBtn->setColor(Color3B(159, 168, 176));
-	startBtn->addTouchEventListener(CC_CALLBACK_0(HistoryScene::NextButtonPressed, this));
+	startBtn->addTouchEventListener(CC_CALLBACK_0(HistorySecond::startButtonPressed, this));
 	this->addChild(startBtn, 1);
 
 	//Add a Rankings Button
@@ -93,7 +93,7 @@ bool HistoryScene::init()
 	rankBtn->setTitleText(" ");
 	rankBtn->setTitleFontSize(80);
 	rankBtn->setColor(Color3B(159, 168, 176));
-	rankBtn->addTouchEventListener(CC_CALLBACK_0(HistoryScene::BackButtonPressed, this));
+	rankBtn->addTouchEventListener(CC_CALLBACK_0(HistorySecond::BackButtonPressed, this));
 	this->addChild(rankBtn, 1);
 
 	//Add a Settings Button
@@ -103,8 +103,9 @@ bool HistoryScene::init()
 	settingsBtn->setTitleText(" ");
 	settingsBtn->setTitleFontSize(80);
 	settingsBtn->setColor(Color3B(159, 168, 176));
-	settingsBtn->addTouchEventListener(CC_CALLBACK_0(HistoryScene::startButtonPressed, this));
+	settingsBtn->addTouchEventListener(CC_CALLBACK_0(HistorySecond::startButtonPressed, this));
 	this->addChild(settingsBtn, 1);
+
 	// add the sprite as a child to this layer
 	this->addChild(sprite, -2);
 
@@ -112,37 +113,38 @@ bool HistoryScene::init()
 
 	DataModel *m = DataModel::getModel();
 
+
 }
-void HistoryScene::onEnter() {
+void HistorySecond::onEnter() {
 	CCLayer::onEnter();
 	// CCLog("onEnter");
 	printf("onEnter");
-	//this->scheduleOnce(schedule_selector(HistoryScene::finishSplash), 1.0f);
+	//this->scheduleOnce(schedule_selector(HistorySecond::finishSplash), 1.0f);
 }
-void HistoryScene::finishSplash(float dt) {
+void HistorySecond::finishSplash(float dt) {
 	// CCDirector::sharedDirector()->replaceScene(StartMenu::scene());
-	auto HistoryScene = HistoryScene::createScene();
-	Director::getInstance()->replaceScene(TransitionFade::create(2, HistoryScene));
+	auto HistorySecond = HistorySecond::createScene();
+	Director::getInstance()->replaceScene(TransitionFade::create(2, HistorySecond));
 }
-void HistoryScene::NextButtonPressed()
+void HistorySecond::NextButtonPressed()
 {
 	// get startMenu scene and run it
-	auto loadHistorySecond = HistorySecond::createScene();
-	Director::getInstance()->replaceScene(TransitionFade::create(2, loadHistorySecond));
+	auto loadHistoryThird = HistoryThird::createScene();
+	Director::getInstance()->replaceScene(TransitionFade::create(2, loadHistoryThird));
 }
-void HistoryScene::BackButtonPressed()
+void HistorySecond::BackButtonPressed()
 {
 	// get startMenu scene and run it
 	auto loadHistoryScene = HistoryScene::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(2, loadHistoryScene));
 }
-void HistoryScene::startButtonPressed()
+void HistorySecond::startButtonPressed()
 {
 	// get startMenu scene and run it
 	auto loadStartMenu = StartMenu::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(2, loadStartMenu));
 }
-void HistoryScene::menuCloseCallback(Ref* pSender)
+void HistorySecond::menuCloseCallback(Ref* pSender)
 {
 	Director::getInstance()->end();
 

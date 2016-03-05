@@ -40,8 +40,7 @@ void MachineGunTower::towerLogic(float dt) {
 
 		this->runAction(Sequence::create(RotateTo::create(rotateDuration, cocosAngle),
 			CallFunc::create(this, callfunc_selector(MachineGunTower::finishFiring)), NULL));
-		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(
-			"Explosion.wav");
+		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Explosion.wav");
 	}
 }
 
@@ -111,6 +110,7 @@ void MachineGunTower::creepMoveFinished(Node* sender)
 // Fast Machinegun Tower
 Tower* FastMachineGunTower::tower()
 {
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Explosion.wav");
 	Tower* tower = Tower::create();
 	tower->sprite = Sprite::create("FastMachineGunTurret.png");
 	tower->setScale(0.5);
@@ -226,8 +226,7 @@ void MissleGunTower::towerLogic(float dt) {
 
 		this->runAction(Sequence::create(RotateTo::create(rotateDuration, cocosAngle),
 			CallFunc::create(this, callfunc_selector(MissleGunTower::finishFiring)), NULL));
-		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(
-			"MissleExplosion.wav");
+		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Explosion.wav");
 	}
 }
 
